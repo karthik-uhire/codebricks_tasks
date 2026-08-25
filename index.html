@@ -3,320 +3,240 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atmosphere — Modern Weather Dashboard</title>
-  <meta name="description" content="A sleek, responsive weather dashboard with live conditions, hourly breakdown, and 7-day forecast powered by Open-Meteo.">
+  <title>Recipe Finder — Discover & Cook Delicious Meals</title>
+  <meta name="description" content="Explore, search, and filter a collection of delicious gourmet recipes by ingredients, categories, prep time, and dietary options.">
   
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   
+  <!-- Main Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="theme-default">
-  <div class="ambient-background" id="ambientBg">
-    <div class="gradient-sphere sphere-1"></div>
-    <div class="gradient-sphere sphere-2"></div>
-    <div class="gradient-sphere sphere-3"></div>
-  </div>
+<body>
 
-  <div class="app-container">
-    <!-- Header Navigation -->
-    <header class="app-header">
-      <div class="brand">
-        <div class="brand-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-          </svg>
-        </div>
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="#" class="brand-logo" id="brand-logo">
+        <span class="logo-icon">🍳</span>
         <div class="brand-text">
-          <h1>Atmosphere</h1>
-          <span class="badge">Live Weather</span>
+          <span class="brand-title">Recipe Finder</span>
+          <span class="brand-subtitle">Culinary Inspiration at Your Fingertips</span>
+        </div>
+      </a>
+      
+      <div class="header-search-wrapper">
+        <div class="search-input-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="text-search" 
+            placeholder="Search recipes, ingredients, dishes..." 
+            aria-label="Search recipes and ingredients"
+            autocomplete="off"
+          >
+          <button type="button" id="clear-search-btn" class="clear-input-btn hidden" aria-label="Clear search text">&times;</button>
         </div>
       </div>
-
-      <!-- Search & Controls -->
-      <div class="header-controls">
-        <div class="search-wrapper">
-          <form id="searchForm" class="search-form" role="search" aria-label="City search">
-            <div class="input-group">
-              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input 
-                type="text" 
-                id="searchInput" 
-                class="search-input" 
-                placeholder="Search city, country..." 
-                autocomplete="off"
-                aria-label="Search city name"
-              >
-              <button type="button" id="clearSearchBtn" class="clear-btn hidden" aria-label="Clear input">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-            <button type="submit" id="searchSubmitBtn" class="btn btn-primary search-btn" aria-label="Submit search">
-              <span>Search</span>
-            </button>
-          </form>
-          
-          <!-- Auto-suggestions dropdown -->
-          <ul id="suggestionsList" class="suggestions-dropdown hidden" role="listbox" aria-label="City suggestions"></ul>
-        </div>
-
-        <div class="action-buttons">
-          <button id="locationBtn" class="btn btn-icon" title="Use My Current Location" aria-label="Use My Current Location">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
-            </svg>
-            <span class="btn-tooltip">Use GPS Location</span>
-          </button>
-
-          <!-- Unit Selector -->
-          <div class="unit-toggle" role="group" aria-label="Temperature unit switcher">
-            <button id="unitCBtn" class="unit-btn active" data-unit="C" aria-pressed="true">°C</button>
-            <button id="unitFBtn" class="unit-btn" data-unit="F" aria-pressed="false">°F</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Recent Search Chips -->
-    <div id="recentSearchesContainer" class="recent-searches-bar hidden">
-      <span class="recent-label">Recent:</span>
-      <div id="recentChips" class="chips-wrapper"></div>
     </div>
+  </header>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-      <!-- 1. EMPTY / WELCOME STATE -->
-      <section id="emptyState" class="state-card empty-state">
-        <div class="welcome-hero">
-          <div class="hero-illustration">
-            <div class="sun-cloud-art">
-              <svg viewBox="0 0 120 120" class="art-svg">
-                <circle cx="50" cy="50" r="28" fill="url(#sunGrad)" class="floating-sun" />
-                <path d="M40 75 C 40 60, 60 55, 70 65 C 78 55, 98 60, 95 75 C 105 78, 105 92, 95 95 L 40 95 C 28 95, 28 78, 40 75 Z" fill="url(#cloudGrad)" class="floating-cloud" />
-                <defs>
-                  <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FFD200" />
-                    <stop offset="100%" stop-color="#FF7E00" />
-                  </linearGradient>
-                  <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
-                    <stop offset="100%" stop-color="#E2E8F0" stop-opacity="0.8" />
-                  </linearGradient>
-                </defs>
+  <!-- Main Content Container -->
+  <main class="main-container">
+    
+    <!-- Filter & Control Section -->
+    <section class="filter-section" aria-label="Recipe Filters">
+      <div class="filter-bar">
+        
+        <!-- Category Filter Pills -->
+        <div class="filter-group category-group">
+          <label class="filter-label">Categories</label>
+          <div class="category-pills" id="category-pills">
+            <button type="button" class="pill-btn active" data-category="All">All Categories</button>
+            <!-- Dynamic Category Pills inserted here -->
+          </div>
+        </div>
+
+        <div class="filter-row-secondary">
+          <!-- Ingredient Filter dropdown / search -->
+          <div class="filter-group ingredient-group">
+            <label for="ingredient-select" class="filter-label">Filter by Ingredient</label>
+            <div class="custom-select-wrapper">
+              <select id="ingredient-select" aria-label="Filter by ingredient">
+                <option value="">-- Choose an ingredient --</option>
+                <!-- Dynamic options inserted here -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Active Selected Ingredient Chips -->
+          <div class="active-chips-wrapper">
+            <span class="chips-label">Selected Ingredients:</span>
+            <div id="selected-ingredient-chips" class="chips-container">
+              <span class="no-chips-hint">None selected</span>
+            </div>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <div class="filter-actions">
+            <button type="button" id="clear-filters-btn" class="btn btn-outline" aria-label="Clear all applied filters">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
               </svg>
-            </div>
-          </div>
-          <h2>Where in the world are you?</h2>
-          <p>Search for a city or pick one of these popular destinations to explore live weather conditions.</p>
-
-          <div class="quick-cities">
-            <button class="quick-city-chip" data-city="Tokyo">
-              <span class="flag">🇯🇵</span> Tokyo
-            </button>
-            <button class="quick-city-chip" data-city="London">
-              <span class="flag">🇬🇧</span> London
-            </button>
-            <button class="quick-city-chip" data-city="New York">
-              <span class="flag">🇺🇸</span> New York
-            </button>
-            <button class="quick-city-chip" data-city="Paris">
-              <span class="flag">🇫🇷</span> Paris
-            </button>
-            <button class="quick-city-chip" data-city="Sydney">
-              <span class="flag">🇦🇺</span> Sydney
-            </button>
-            <button class="quick-city-chip" data-city="Reykjavik">
-              <span class="flag">🇮🇸</span> Reykjavik
+              Clear Filters
             </button>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- 2. LOADING SKELETON STATE -->
-      <section id="loadingState" class="state-card loading-state hidden" aria-hidden="true">
-        <div class="skeleton-hero">
-          <div class="skeleton skeleton-title"></div>
-          <div class="skeleton skeleton-subtitle"></div>
-          <div class="skeleton-main-row">
-            <div class="skeleton skeleton-temp"></div>
-            <div class="skeleton skeleton-icon"></div>
-          </div>
-          <div class="skeleton-grid">
-            <div class="skeleton skeleton-metric"></div>
-            <div class="skeleton skeleton-metric"></div>
-            <div class="skeleton skeleton-metric"></div>
-            <div class="skeleton skeleton-metric"></div>
-          </div>
-        </div>
-        <div class="skeleton-strip-container">
-          <div class="skeleton skeleton-strip-title"></div>
-          <div class="skeleton-strip">
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
-            <div class="skeleton skeleton-card"></div>
+      <!-- Active Filter Summary Bar -->
+      <div class="results-summary-bar">
+        <span id="results-count" class="results-count">Showing all recipes</span>
+      </div>
+    </section>
+
+    <!-- Recipe Card Grid Container -->
+    <section class="grid-section" aria-label="Recipes List">
+      
+      <!-- Skeleton Loaders (Shown while fetching) -->
+      <div id="skeleton-grid" class="recipe-grid">
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line desc"></div>
+            <div class="skeleton-line footer"></div>
           </div>
         </div>
-      </section>
-
-      <!-- 3. ERROR STATE -->
-      <section id="errorState" class="state-card error-state hidden" aria-live="assertive">
-        <div class="error-content">
-          <div class="error-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line desc"></div>
+            <div class="skeleton-line footer"></div>
           </div>
-          <h3 id="errorTitle">Location Not Found</h3>
-          <p id="errorMessage">We couldn't retrieve weather data for that location. Please check spelling or try a different city.</p>
-          <button id="errorRetryBtn" class="btn btn-secondary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
-            </svg>
-            Try Again
-          </button>
         </div>
-      </section>
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line desc"></div>
+            <div class="skeleton-line footer"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line desc"></div>
+            <div class="skeleton-line footer"></div>
+          </div>
+        </div>
+      </div>
 
-      <!-- 4. DASHBOARD SUCCESS STATE -->
-      <section id="dashboardContent" class="dashboard-grid hidden">
-        <!-- Main Weather Hero Panel -->
-        <div class="glass-card hero-weather-panel">
-          <div class="location-header">
-            <div class="location-meta">
-              <h2 id="cityName" class="city-title">--</h2>
-              <span id="countryName" class="country-subtitle">--</span>
-            </div>
-            <div class="time-badge">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span id="localTime">--:--</span>
+      <!-- Main Recipe Card Grid -->
+      <div id="recipe-grid" class="recipe-grid hidden">
+        <!-- Recipe Cards inserted dynamically by JS -->
+      </div>
+
+      <!-- Empty State Container -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-state-icon">🍽️</div>
+        <h3 class="empty-state-title">No recipes match your search</h3>
+        <p class="empty-state-desc">Try clearing your filters or searching for a different ingredient or category.</p>
+        <button type="button" id="empty-clear-btn" class="btn btn-primary">Clear All Filters</button>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Recipe Detail Modal -->
+  <div id="recipe-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+    <div class="modal-container">
+      <button type="button" id="modal-close-btn" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      
+      <div class="modal-header-hero">
+        <img id="modal-img" src="" alt="Recipe image" class="modal-img">
+        <div class="modal-header-overlay">
+          <span id="modal-category" class="badge badge-category">Category</span>
+          <h2 id="modal-title" class="modal-title">Recipe Title</h2>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-meta-grid">
+          <div class="meta-item">
+            <span class="meta-icon">⏱️</span>
+            <div class="meta-info">
+              <span class="meta-label">Prep Time</span>
+              <span id="modal-prep-time" class="meta-value">15 mins</span>
             </div>
           </div>
-
-          <div class="current-main">
-            <div class="temp-wrapper">
-              <div id="currentTemp" class="temp-display">--°</div>
-              <div class="condition-badge">
-                <span id="conditionLabel" class="condition-text">--</span>
-                <span id="feelsLike" class="feels-like-text">Feels like --°</span>
-              </div>
-            </div>
-            <div id="weatherIconContainer" class="hero-weather-icon">
-              <!-- Dynamic SVG Weather Icon injected here -->
+          <div class="meta-item">
+            <span class="meta-icon">🔥</span>
+            <div class="meta-info">
+              <span class="meta-label">Cook Time</span>
+              <span id="modal-cook-time" class="meta-value">20 mins</span>
             </div>
           </div>
-
-          <!-- Secondary Weather Metrics -->
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon humidity-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <span class="metric-label">Humidity</span>
-                <span id="metricHumidity" class="metric-value">--%</span>
-              </div>
+          <div class="meta-item">
+            <span class="meta-icon">👥</span>
+            <div class="meta-info">
+              <span class="meta-label">Servings</span>
+              <span id="modal-servings" class="meta-value">4 servings</span>
             </div>
-
-            <div class="metric-card">
-              <div class="metric-icon wind-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <span class="metric-label">Wind Speed</span>
-                <span id="metricWind" class="metric-value">-- km/h</span>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon uv-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="4"></circle>
-                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <span class="metric-label">UV Index</span>
-                <span id="metricUV" class="metric-value">--</span>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon pressure-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 6v6l4 2"></path>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <span class="metric-label">Air Pressure</span>
-                <span id="metricPressure" class="metric-value">-- hPa</span>
-              </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📊</span>
+            <div class="meta-info">
+              <span class="meta-label">Difficulty</span>
+              <span id="modal-difficulty" class="meta-value">Medium</span>
             </div>
           </div>
         </div>
 
-        <!-- Hourly Forecast Section -->
-        <div class="glass-card section-card hourly-section">
-          <div class="section-header">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              Hourly Forecast (Next 24 Hours)
+        <p id="modal-description" class="modal-description">Recipe summary description goes here...</p>
+
+        <div class="modal-content-layout">
+          <!-- Ingredients Column -->
+          <div class="modal-column">
+            <h3 class="section-heading">
+              <span>🛒</span> Ingredients
             </h3>
-            <span class="scroll-hint">Scroll horizontal ➔</span>
+            <ul id="modal-ingredients-list" class="ingredients-list">
+              <!-- Dynamically populated -->
+            </ul>
           </div>
-          <div id="hourlyTrack" class="hourly-scroll-container">
-            <!-- Hourly Cards injected here -->
-          </div>
-        </div>
 
-        <!-- 7-Day Daily Forecast Section -->
-        <div class="glass-card section-card daily-section">
-          <div class="section-header">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              7-Day Daily Forecast
+          <!-- Instructions Column -->
+          <div class="modal-column">
+            <h3 class="section-heading">
+              <span>👩‍🍳</span> Instructions
             </h3>
-          </div>
-          <div id="dailyGrid" class="daily-cards-grid">
-            <!-- Daily Cards injected here -->
+            <ol id="modal-instructions-list" class="instructions-list">
+              <!-- Dynamically populated -->
+            </ol>
           </div>
         </div>
-      </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="app-footer">
-      <p>Data provided by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo API</a> • Built with Vanilla JS & CSS Grid</p>
-    </footer>
+      </div>
+    </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>© 2026 Recipe Finder — Built with HTML, CSS, Vanilla JS & Express REST API</p>
+    </div>
+  </footer>
 
   <script src="script.js"></script>
 </body>
